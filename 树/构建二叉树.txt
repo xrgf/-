@@ -1,0 +1,162 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<iostream>
+using namespace std;
+
+
+int ino[50], post[50];//后中
+typedef struct TreeNode {
+	int data;
+	struct TreeNode* lchild, * rchild;
+}BTnode, * BTtree;
+int map[50][50] = {0};//如果形成的二叉树有0 赋值就不能赋值0
+BTtree Creattree(int root, int start, int end) { //中后还原二叉树
+	BTtree bt;
+	if (start > end) return NULL;
+	int i;
+	for (i = start; post[root] != ino[i]; i++);
+	//bt = new BTnode;
+	bt = (BTtree)malloc(sizeof(BTnode));
+	bt->data = post[root];
+	bt->lchild = Creattree(root - (end - i) - 1, start, i - 1);
+	bt->rchild = Creattree(root - 1, i + 1, end);
+	return bt;
+}
+//void BLtree(BTtree bt) {       //层次遍历
+//	if (bt == NULL) return NULL;
+//	int flag = 0;
+//	BTtree queue[50];
+//	int front = -1; int rear = 0;
+//	queue[rear] = bt;
+//	while (front != rear) {
+//		front++;//保证输出的第一个数之前没有空格
+//		
+//		cout << queue[front]->data;
+//
+//		if (queue[front]->lchild != NULL) {
+//			rear++;
+//			queue[rear] = queue[front]->lchild;
+//		}
+//		if (queue[front]->rchild != NULL) {
+//			rear++;
+//			queue[rear] = queue[front]->rchild;
+//		}
+//	}
+//}
+
+void BLtree(BTtree bt)
+{
+	if (bt == NULL)
+	{
+		return ;
+	}
+	int flag = 0;
+	BTtree queue[50];
+	int front = -1;
+	int rear = 0;
+	queue[rear] = bt;
+	for (int i = 0; i < 50; i++)
+	{
+		if (map[rear][i] == 0)
+		{
+			map[rear][i] = queue[rear]->data;//将队列的值存入二维数组中
+			break;
+		}
+	}
+	//用来表示左边右边
+	while (front != rear)
+	{
+		
+		front++;
+		
+		if (queue[front]->lchild != NULL)
+		{
+			rear++;
+			queue[rear] = queue[front]->lchild;
+			for (int i = 0; i < 50; i++)
+			{
+				if (map[front][i] == 0)
+				{
+					map[front][i] = queue[front]->lchild->data;//将队列的值存入二维数组中
+					break;
+				}
+			}
+		}
+		if (queue[front]->rchild != NULL)
+		{
+			rear++;
+			queue[rear] = queue[front]->rchild;
+			for (int i = 0; i < 50; i++)
+			{
+				if (map[front][i] == 0)
+				{
+					map[front][i] = queue[front]->rchild->data;//将队列的值存入二维数组中
+					break;
+				}
+			}
+		}
+	
+		
+		
+	}
+}
+
+void bianli(BTtree root, int deep)
+{
+	if (root == NULL)
+		return;
+	for (int i = 0; i < 50; i++)
+	{
+		if (map[deep][i] == 0)
+		{
+			map[deep][i] = root->data;
+			break;
+		}
+		
+	}
+	bianli(root->lchild, deep + 1);
+	bianli(root->rchild, deep + 1);
+}
+int main() {
+	int N;  scanf("%d", &N);
+	int i; BTtree bt;
+
+	for (i = 0; i < N; i++) {
+		int x;  scanf("%d", &x);
+		ino[i] = x;
+	}
+	for (i = 0; i < N; i++) {
+		int x; scanf("%d", &x);
+		post[i] = x;
+	}
+	
+	bt = Creattree(N - 1, 0, N - 1);
+	BLtree(bt);
+	printf("\n");
+	for (int i = 0; i < 50; i++)
+	{
+		if (i % 2 == 0)
+		{
+			for (int j = 0; j < 49; j++)
+			{
+				if (map[i][j] != 0)
+				{
+					printf("%d  ", map[i][j]);
+				}
+			}
+		}
+		else if(i%2!=0)
+		{
+			for (int j = 49; j >= 0; j--)
+			{
+				if (map[i][j] != 0)
+				{
+					printf("%d  ", map[i][j]);
+				}
+			}
+		
+		}
+	}
+	
+	return 0;
+}

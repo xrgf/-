@@ -1,0 +1,9 @@
+	FILE* k = freopen("write.txt", "a", stdout);
+	printf("kkkk");
+	FILE* mm = freopen("input.txt", "r", stdin);
+	int a = 0;
+	int b = 0;
+	scanf_s("%d%d", &a, &b);//所有输入由文件内部的值进行输入  文件内有1 2 输入 12 
+	printf("%d%d", a, b);//所以打印在前面文件中 输出到文件 12
+	fclose(k);
+	fclose(mm);

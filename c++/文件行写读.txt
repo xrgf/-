@@ -1,0 +1,47 @@
+#includeiostream
+#includefstream
+#includesstream
+#includestring
+#includevector
+using namespace std;
+int main()
+{
+	fstream w;
+	w.open(1.txt, iosout);写的方式
+	if (!w.is_open())
+	{
+		cout  创建失败;
+	}
+	vectorstring f;
+	for (int i = 0; i  5; i++)
+	{
+		string c;
+		cin  c;
+		f.push_back(c);
+	}
+	for (int i = 0; i  f.size(); i++)
+	{
+		w  f[i]  endl;
+	}
+	按行读入的二种方式
+	fstream r;
+	r.open(1.txt, iosin);
+	cout  读取文本文件  endl;
+	while (!r.eof())
+	{
+		char ch[1024];
+		r.getline(ch, 1024);
+		cout  ch  endl;
+
+	}
+	cout  二次读取  endl;
+	r.clear();
+	r.seekg(0, iosbeg);
+	while (!r.eof())
+	{
+		string s;
+		getline(r, s);
+		cout  s  endl;
+	}
+	return 0;
+}

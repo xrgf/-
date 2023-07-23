@@ -1,0 +1,98 @@
+#include<stdio.h>
+#include<assert.h>
+#include<stdlib.h>
+struct node
+{
+	int priority;
+	int date;
+};
+struct QUEUE
+{
+	struct node array[10];
+	int size;
+};
+struct QUEUE* creatqueue()
+{
+	struct QUEUE* queue = (struct QUEUE*)malloc(sizeof(struct QUEUE));
+	assert(queue);
+	queue->size = 0;
+	return queue;
+}
+void STORAGE(struct QUEUE* queue, struct node date)
+{
+	if (queue->size > 9)
+	{
+		printf("优先队列已经满了 无法存入\n");
+	}
+	else
+	{
+		queue->array[queue->size++] = date;
+	}
+}
+struct node* pushqueue(struct QUEUE* queue)
+{
+	
+	if (queue->size == 0)
+	{
+		printf("没有数据无法出列");
+		return NULL;
+	}
+	else
+	{
+		int Index=0;
+		int min = queue->array[0].priority;
+		
+		for (int i = 0; i < queue->size; ++i)
+		{
+			if (queue->array[i].priority < min)
+			{
+				min = queue->array[i].priority;
+				Index = i;
+			}
+		}
+		
+		queue->size--;
+		return &queue->array[Index];	
+	}
+}
+void againarrage(struct QUEUE* queue)
+{
+	int min = queue->array[0].priority;
+	int Index = 0;
+	
+
+	for (int i = 0; i < queue->size; ++i)
+	{
+		if (queue->array[i].priority < min)
+		{
+			min = queue->array[i].priority;
+			Index = i;
+		}
+	}
+	
+	for (int  i = Index; i < queue->size; ++i)
+	{
+		queue->array[i] = queue->array[i + 1];
+	}
+	
+}
+int main()
+{
+	struct QUEUE* queue = creatqueue();
+	struct node read;
+	struct node* write;
+	FILE* pf = fopen("read.txt", "r");
+	while (fscanf(pf,"%d\t%d\n", &read.priority,&read.date) != EOF)
+	{
+		STORAGE(queue,read);
+	}
+	while (queue->size != 0)
+	{
+		write = pushqueue(queue);
+		printf("%d\t%d\n", write->date, write->priority);
+	   againarrage(queue);
+	}
+
+
+	fclose(pf);
+}

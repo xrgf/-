@@ -1,0 +1,22 @@
+int SetHeight(PTRnode& root)
+{
+	if (root == NULL)
+	{
+		return 0;
+	}
+	else
+	{
+		root->height= max(SetHeight(root->Lchild), SetHeight(root->Rchild)) + 1;
+		return root->height;
+	}
+}
+int setdepth(PTRnode& root,int depth)
+{
+	if (root == NULL)
+	{
+		return 0;
+	}
+	root->height = depth;
+	setdepth(root->Lchild, depth + 1);
+	setdepth(root->Rchild, depth + 1);
+}

@@ -1,0 +1,57 @@
+#include<iostream>
+using namespace std;
+void swap(int array[], int i, int j)
+{
+	int temp = array[i];
+	array[i] = array[j];
+	array[j] = temp;
+}
+int partition(int* a, int left, int right)
+{
+	int pivot = left;
+	int index = left + 1;
+	for (int i = index; i <= right; i++)
+	{
+		if (a[i] < a[pivot])
+		{
+			swap(a, i, index);
+			index++;
+		}
+	}
+	swap(a, pivot, index - 1);//index-1表示找到比a[pivot]要小的个数
+	return index - 1;
+}
+void quick_sort(int* a, int left, int right)
+{
+	if (left < right)
+	{
+		int m = partition(a, left, right);
+		quick_sort(a, left, m);
+		quick_sort(a, m + 1, right);
+	}
+}
+void printf_sort(int* a, int len,void(*fun)(int a[], int len))
+{
+	for (int i = 0; i < len; i++)
+	{
+		cout << a[i] << " ";
+	}
+}
+void Quick_sort(int a[], int len)
+{
+	quick_sort(a, 0, len - 1);
+}
+int main()
+{
+
+
+	int a[10] = { 1,8,6,11,55,16,17,16,30,12 };
+	Quick_sort(a, 10);
+	printf_sort(a, 10, Quick_sort);
+	cout << endl;
+	for (int i = 0; i < 10; i++)
+	{
+		cout << a[i] << " ";
+	}
+	return 0;
+}

@@ -1,0 +1,199 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<assert.h>
+#include<string.h>
+typedef struct node {
+	int date;
+	struct node* next;
+}*PNODE;
+struct List {
+	struct node* pronode;//这只是一个类型
+	struct node*tailnode;
+	int size;
+};
+//创建表头表尾
+struct List* creatlist()
+{
+	struct List* list = (struct List*)malloc(sizeof(struct List));
+	assert(list);
+	list->pronode = NULL;
+	list->tailnode = NULL;
+	list->size = 0;//初始化
+	return  list;
+
+}
+//打印链表
+void printflist(struct List* list)
+{
+	PNODE pmove = list->pronode;
+	while (pmove != NULL)
+	{
+		printf("%d\t", pmove->date);
+		pmove = pmove->next;
+	}
+	printf("\n");
+}
+//创建节点
+PNODE creatnode(int date )
+{
+	PNODE newnode = (PNODE)malloc(sizeof(struct node));
+	assert(newnode);
+	newnode->next = NULL;
+	newnode->date = date;
+	return newnode;
+
+}
+//表头插入
+void insertbyhead(struct List* list,int date)
+{
+	PNODE newnode = creatnode(date);
+	if (list->size == 0)
+	{
+		list->pronode = list->tailnode = newnode;
+		
+	}
+	else
+	{
+		newnode->next = list->pronode;
+		list->pronode = newnode;
+	}
+	list->size++;
+}
+//表尾插入
+void insertbytail(struct List* list, int date)
+{
+	PNODE newnode = creatnode(date);
+	if (list->size == 0)
+	{
+		list->pronode = newnode;
+		list->tailnode = newnode;
+	}
+	else
+	{
+		list->tailnode->next = newnode;
+		list->tailnode = newnode;
+	}
+	list->size++;
+}
+//表头删除
+void deletehead(struct List* list)
+{
+	PNODE next = list->pronode->next;
+	free(list->pronode);
+	list->pronode = next;
+}
+//表尾删除
+void deletetail(struct List* list)
+{
+	PNODE pmove = list->pronode;
+	if (list->size == 0)
+	{
+		printf("无法删除");
+		return;
+	}
+	while (pmove->next != list->tailnode)
+	{
+		pmove = pmove->next;
+	}
+	pmove->next = NULL;
+	free(list->tailnode);
+	list->tailnode = pmove;
+
+}
+//定位后面插入
+void insertpostail(struct List* list, int date, int pos)
+{
+
+	PNODE pmove = list->pronode;
+	while (pmove->date != pos && pmove->next != NULL)
+	{
+		pmove = pmove->next;
+	}
+	if (pmove->date!=pos&&pmove->next == NULL)
+	{
+		printf("没找到");
+	}
+	else
+	{
+		PNODE newnode = creatnode(date);
+		newnode->next = pmove->next;
+		pmove->next = newnode;
+	}
+	list->size++;
+}
+//定位前面插入
+void insertpospro(struct List* list, int date, int pos)
+{
+	PNODE pronode = list->pronode;
+	PNODE posnode = list->pronode->next;
+	if (list->pronode->date == pos)
+	{
+		insertbyhead(list, date);//如果就出现表头为要找的数据就直接用表头插入
+	}
+	else
+	{
+
+		while (posnode->date != pos && posnode->next != NULL)
+		{
+			pronode = posnode;
+			posnode = posnode->next;
+		}
+		if (posnode->date != pos && posnode->next!= NULL)//防止最后面找到
+		{
+			printf("没找到");
+		}
+		else
+		{
+			PNODE newnode = creatnode(date);
+			newnode->next = pronode->next;
+			pronode->next = newnode;
+
+
+		}
+	}
+	list->size++;
+	
+}
+//堆内存释放
+
+int main()
+{
+	void freestorage(struct List* list);
+	struct List* list = creatlist();
+	insertbyhead(list, 3);
+	insertbytail(list, -1);
+	insertbyhead(list, 1);
+	insertbyhead(list, 2);
+	printflist(list);
+	deletehead(list);
+	printflist(list);
+	deletetail(list);
+	printflist(list);
+	insertpostail(list, 5, 3);
+	printflist(list);
+	insertpostail(list, 2, 3);
+	printflist(list);
+	insertpospro(list, 8, 1);
+	printflist(list);
+	freestorage(list);
+	free(list);
+
+
+	return 0;
+}
+void freestorage(struct List* list)
+{
+	PNODE nextnode = NULL;
+	
+	while (list->pronode != list->tailnode)
+	{
+		nextnode = list->pronode->next;//表头指向下一个
+		free(list->pronode);
+		list->pronode = nextnode;
+		list->size--;
+	}
+	free(list->pronode);
+	list->size--;
+
+
+}

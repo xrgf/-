@@ -1,0 +1,108 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<assert.h>
+struct hash {
+	int first;
+	char name[20];
+};
+struct hashlist
+{
+	struct hash** node;
+	int divisor;
+	int size;
+};
+/*
+哈希结构就是数组结构  通过相应的first取余法 找到相应的位置去做对数字的存储
+
+
+*/
+struct hashlist* creathashlist(int divisor)
+{
+	struct hashlist* newlist = (struct hashlist*)malloc(sizeof(struct hash) );
+	assert(newlist);
+	newlist->divisor = divisor;
+	newlist->size = 0;
+	newlist->node = (struct hash**)malloc(sizeof(struct hash*) * divisor);
+	for (int i = 0; i < newlist->divisor; i++)
+	{
+		newlist->node[i] = NULL;   //所以刚开始创建的一级指针的没有指向的
+	}                               //要用都的做空的赋值 不然的理解值
+	//memset(newlist->node, 0, sizeof((struct hash*));
+	assert(newlist->node);
+	return newlist;
+}
+//通过hash类型的first 取余找到相应的位置进行存储
+int  searchhash(struct  hashlist* list, struct hash date)
+{
+	int pos = date.first%list->divisor;
+	int curpos = pos;
+	//用循环是为了解决1 11这类
+	do
+	{
+		if (list->node[curpos] == NULL)
+		{
+			return curpos;
+		}
+		curpos = curpos + 1 % list->divisor;
+	} while (curpos != pos);//转了一圈没位置
+	printf("满了");
+	system("pause");
+	return NULL;
+}
+void inserthash(struct hashlist * list, struct hash date)
+{
+	
+	int pos = searchhash(list, date);
+	if (list->node[pos] == NULL||list->node[pos]->first==date.first)
+	{
+
+		list->node[pos] = (struct hash*)malloc(sizeof(struct hash));
+		assert(list->node[pos]);
+		memcpy(list->node[pos], &date, sizeof(struct hash));
+		list->size++;
+	}
+	/*else
+	{
+		if (list->node[pos]->first == date.first)
+		{
+			strcpy(list->node[pos]->name, date.name);
+		}
+		else
+		{
+			printf("manl ");
+		}
+	}*/
+
+	
+
+}
+void printfhash(struct hashlist* list)
+{
+	for (int i = 0; i < list->divisor; i++)
+	{
+		if (list->node[i] == NULL)
+		{
+			printf("null");
+		
+		}
+		else
+		printf("%s\t%d\n", list->node[i]->name,list->node[i]->first);
+	}
+}
+
+int main()
+{
+	int divisor = 10;
+	
+	struct hash node[] = { 1,"kk",13,"ll",3,"cc",11,"mm",15,"信任"};
+	struct hashlist* list = creathashlist(divisor);
+	for (int i = 0; i < 5; ++i)
+	{
+		inserthash(list, node[i]);
+	}
+	printfhash(list);
+
+
+	return 0;
+}

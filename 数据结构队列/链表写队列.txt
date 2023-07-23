@@ -1,0 +1,77 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<assert.h>
+#include<string.h>
+struct myqueue
+{
+	int date;
+	struct myqueue* next;
+};
+typedef struct queue
+{
+	int queuesize;
+	struct myqueue* queuehead;
+	struct myqueue* queuetail;
+}QUEUE,*IPQUEUE;
+IPQUEUE creatqueue()
+{
+	IPQUEUE newqueue = (IPQUEUE)malloc(sizeof(QUEUE));
+	assert(newqueue);
+	newqueue->queuetail = newqueue->queuetail = NULL;
+	newqueue->queuesize = 0;
+	return newqueue;
+}
+struct myqueue* creatqueuenode(int date)
+{
+	struct myqueue* newnode = (struct myqueue*)malloc(sizeof(struct myqueue));
+	assert(newnode);
+	newnode->next = NULL;
+	newnode->date = date;
+	return newnode;
+}
+void queueinsert(IPQUEUE queue, int date)
+{
+	struct myqueue* newnode = creatqueuenode(date);
+	if (queue->queuesize==0)
+	{
+		queue->queuehead = newnode;
+		queue->queuetail = newnode;
+	}
+	else
+	{
+		queue->queuetail->next = newnode;
+		queue->queuetail = newnode;
+	}
+	queue->queuesize++;
+}
+int exitqueue(IPQUEUE queue,int *date)
+{
+	if (queue->queuesize == 0)
+	{
+		printf("队列为空，无法出列");
+		return 0;
+	}
+	struct myqueue *pmove = queue->queuehead;
+	queue->queuehead = queue->queuehead->next;
+	*date= pmove->date;
+	free(pmove);
+	queue->queuesize--;
+	return *date;
+}
+int main()
+{
+	IPQUEUE queue = creatqueue();
+	int num = 123456;
+	while (num != 0)
+	{
+		queueinsert(queue, num % 10);
+		num /= 10;
+	}
+	int date;
+	while (queue->queuesize!=0)
+	{
+		date=exitqueue(queue, &date);
+		printf("%d", date);
+	}
+
+}

@@ -1,0 +1,53 @@
+#include<stdio.h>
+#include<stdlib.h>
+struct mystack {
+	int* pstack;
+	int popstack;
+};
+struct mystack* creatstack()
+{
+	struct mystack* stack = (struct mystack*)malloc(sizeof(struct mystack));
+	stack->pstack = (int*)malloc(sizeof(int) * 10);
+	stack->popstack = -1;
+	return stack;
+}
+void push(struct mystack* stack, int date)
+{
+	//要考虑栈满因为是一个一个插入
+	if (stack->popstack == 9)
+	{
+		printf("栈满无法插入");
+	}
+	stack->pstack[++(stack->popstack)] = date;
+}
+int leave(struct mystack* stack, int* date)
+{
+	if (stack->popstack == -1)
+	{
+		printf("无栈");
+		return 0;
+	}
+	*date = stack->pstack[stack->popstack--];
+	return *date;
+}
+int main()
+{
+	struct mystack* stack = creatstack();
+	int num = 7;
+	while (num != 0)
+	{
+		push(stack, num % 2);
+			num /= 2;
+	}
+	int date = 0;
+	while (stack->popstack != -1)
+	{
+		date = leave(stack, &date);
+			printf("%d", date);
+	}
+	free(stack->pstack);
+	free(stack);
+
+
+	return  0;
+}//还有一种类似 直接在栈区用数组区写 这里只是有栈一样的结构先进后出

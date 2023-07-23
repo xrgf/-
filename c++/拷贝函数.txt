@@ -1,0 +1,83 @@
+include<iostream>
+#include<string>
+#include<cstdio>
+using namespace std;
+class Father
+{
+public:
+	Father() { cout << "无参数构造<<" << endl; };
+	Father(string name, int age) :name(name), age(age) { cout << "有参数" << endl; };
+	void printf() { cout << name << "\t" << age << endl; }
+protected:
+	string name;
+	int age;
+};
+class Mother
+{
+public:
+	Mother() { cout << "无参数构造<<" << endl; };
+	Mother(string name, int age) :name(name), age(age) { cout << "有参数" << endl; }
+	void printf() { cout << name << "\t" << age << endl; }
+protected:
+	string name;
+	int age;
+};
+class Family
+{
+public:
+	Family()
+	{
+		father = new Father("爸爸",50);
+		mother = new Mother("妈妈",49);
+	}
+	~Family()
+	{
+		delete father;
+		delete mother;
+	}
+	void printf()
+	{
+		father->printf();
+		cout << "过度" << endl;
+		mother->printf();
+	}
+	int& getpeople()
+	{
+		return people;
+	}
+	//拷贝函数 这个是深拷贝 因为指针要用深拷贝不然地址的赋值 析构函数会释放二次
+	//是一个类型到一个类型的拷贝 
+	Family(const Family& object)
+	{
+		//
+		this->father = new Father;
+		this->father = object.father;
+		this->mother = new Mother; 
+		this->mother = object.mother;
+
+	}
+	
+	
+protected:
+	Father *father;
+	Mother* mother;
+	static int people;
+};
+int Family::people = 2;
+int main()
+{
+	
+	Family family1;
+	family1.printf();
+	cout << family1.getpeople() << endl;
+	Family f = family1;//这是调用拷贝函数
+	Family f2(family1);
+	f2.printf();
+
+	Family f();//这是调用构造函数;
+	Family f = Family();//这是调用构造函数 创建一个无名的对象
+	Family f(f1);//调用拷贝函数;
+	Family f=f1//调用拷贝函数
+
+	return 0;
+}

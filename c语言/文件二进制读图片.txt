@@ -1,0 +1,72 @@
+#include<stdio.h>
+struct mm
+{
+	char name[20];
+	int age;
+};
+void writefile(struct mm array[],int arraynum, const char* filename)
+{
+	FILE*write=fopen(filename,"w");
+	for (int i = 0; i < arraynum; ++i)
+	{
+		fprintf(write, "%s\t%d\n", array[i].name, array[i].age);
+	}
+	fclose(write);
+}
+void readfile(struct mm array[], const char* name)
+{
+	FILE* read = fopen(name, "r");
+	if (read == NULL)
+	{
+		return;
+	}
+	int i = 0;
+	while (fscanf(read, "%s\t%d\n", array[i].name, &array[i].age)!=EOF)
+	{
+		i++;
+	}
+	fclose(read);
+}
+void printfkk(struct mm array[],int arraynum)
+{
+	for (int i = 0; i < arraynum; ++i)
+	{
+		printf("%s\t%d\n", array[i].name, array[i].age);
+	}
+	
+}
+int main()
+{
+	struct mm array[3] = { "kk",20,"mm",15,"ll",8 };
+	//FILE* write = fopen("write.txt", "wb");
+	//fwrite(array, sizeof(mm), 3, write);
+	//fclose(write);
+	//struct mm a[3];//写一次要关闭这样使文件指针指向开头
+	//FILE* read = fopen("write.txt", "rb");
+	//fread(a, sizeof(struct mm), 3, read);
+	//for (int i = 0; i < 3; ++i)
+	//{
+	//	printf("%s\t%d\n", a[i].name, a[i].age);
+	//}
+	//fclose(read);
+	////i
+	struct mm kk[3];
+	writefile(array, 3,"write.txt");
+	readfile(kk, "write.txt");
+	printfkk(kk,3);
+	char str[68000] = "";
+	FILE* fp = fopen("66.jpg", "rb");//二进制读
+	fread(str, 67822, 1, fp);
+	fclose(fp);
+	FILE* write = fopen("88.jpg", "wb");//注意读写也要用二进制
+	for (int i = 1000; i < 1500; ++i)
+	{
+		str[i] -= 1;//这样可以对图片加密
+	}
+	fwrite(str, 67822, 1, write);
+	fclose(write);
+
+	
+
+	return 0;
+}//大文件用动态内存申请 大文件不能直接用数组 不存在这么大栈区 不可以开辟这么大内存

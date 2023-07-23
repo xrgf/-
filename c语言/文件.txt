@@ -1,0 +1,36 @@
+#include<stdio.h>
+int main()
+{
+
+	//FILE* pf = fopen("read.te", "a+");//a+在已经有我文件后面添加
+	//char str[20] = "你是好人";w+打开一个文件有清空没有创建
+	// 	   r+打开一个已经有的文件
+	//fputs(str, pf);
+
+	//fclose(pf);
+	//FILE* pf = fopen("read.te", "r");
+	////rewind(pf);//指向看开头
+	//fseek(pf, 0, SEEK_END);//找到文件指针指向位置 seek_是表示指向位置 0表示指向位置前后参数为前面0个
+SEEK-CUR//文件当前位置
+SEEK_END//文件结束位置
+SEEK_SET//文件开始位置
+	//int i=ftell(pf);//文件指针总共移动几个字节  返回一个整数
+	//printf("%d", i);
+	FILE* pf = fopen("sb.txt", "r+");
+	char i;
+	i = fgetc(pf);
+	while (i!=EOF)
+	{
+		putchar(i);
+		i = fgetc(pf);
+		
+		
+	}
+	fclose(pf);
+
+	return 0;
+}
+feof（pf）//判断文件指针是否在末尾
+fread（str，大小，个数，文件地址）；
+fwite（str，大小，个数，文件地址）；
+文件内容修改 只能先将文件内容读到一个地方去 在修改 不能直接在文件中修改

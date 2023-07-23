@@ -1,0 +1,62 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<assert.h>
+#define num 10
+struct Qarray {
+	int head;
+	int tail;
+	int* array;
+};
+struct Qarray* creatqueuq()
+{
+	struct	Qarray* newqueue = (struct Qarray*)malloc(sizeof(struct Qarray));
+	assert(newqueue);
+	newqueue->array= (int*)malloc(sizeof(int) * num);
+	assert(newqueue->array);
+	newqueue->head = -1;
+	newqueue->tail = -1;
+	return newqueue;
+
+}
+void push(struct Qarray*queue,int date)
+{
+	if (queue->tail == num - 1)
+	{
+		printf("满了");
+		system("pause");
+		return;
+	}
+	else
+	{
+		queue->array[++queue->tail] = date;
+	}	
+}
+int gethead(struct Qarray* queue)
+{
+	return queue->array[queue->head];
+}
+void pop(struct Qarray* queue)
+{
+	if(queue->head != queue->tail)
+	{
+		queue->head++;
+	}
+}
+int main()
+{
+	struct Qarray* queue = creatqueuq();
+	int intnum = 12345678;//
+	while (intnum != 0)
+	{
+		push(queue, intnum % 10);
+		intnum /= 10;
+	}
+	while (queue->head != queue->tail)
+	{
+		pop(queue);
+		printf("%d", gethead(queue));
+	}
+	free(queue->array);
+	free(queue);
+	return 0;
+}

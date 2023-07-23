@@ -1,0 +1,36 @@
+#include<stdio.h>
+int main(int i,char *p[])
+{
+ 
+            i为命令的个数
+            P[0]记录当前exe文件的路径（exe的名字）
+            P[1] 第二个命令
+          .......
+	if (i != 3)
+	{
+		printf("yichang\n");
+		printf("%s", p[0]);
+	}
+	else
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			printf("%s", p[i]);
+		}
+	}
+	
+
+
+C:\Users\asus\source\repos\Project17\Debug\ 
+这个是路径
+Project17
+文件名
+执行的后面写 miss you
+就会打印 Project  miss you 因为为三个project也算p[0]
+以为i表示命令个数 如果是3进行else 分别打印P[0] P[1]P[3]
+
+	
+
+
+	return 0;
+}

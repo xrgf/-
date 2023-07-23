@@ -1,0 +1,90 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<assert.h>
+struct Stact {
+	int date;
+	struct Stact* next;
+
+};
+struct list {
+	struct Stact* pronode;
+	struct Stact* tailnode;
+	int size;
+};
+struct Stact* creatnode(int date)
+{
+	struct Stact* newnode = (struct Stact*)malloc(sizeof(struct Stact));
+	assert(newnode);
+	newnode->next = NULL;
+	newnode->date = date;
+	return newnode;
+}
+struct list* creatlist()
+{
+	struct list* newlist = (struct list*)malloc(sizeof(struct list));
+	assert(newlist);
+	newlist->size = 0;
+	newlist->pronode = newlist->tailnode = NULL;
+	return newlist;
+}
+void stactinsert(struct list* list,int date)
+{
+	struct Stact* newnode = creatnode(date);
+	if (list->size == 0)
+	{
+		list->pronode = list->tailnode = newnode;
+	}
+	else
+	{
+		newnode->next = list->pronode;
+		list->pronode = newnode;
+	}
+	list->size++;
+}
+void pushstack(struct list* list)
+{
+	struct Stact* pmove = list->pronode;
+	struct Stact* q;
+	list->pronode = pmove->next;
+	free(pmove);
+	list->size--;
+	
+}/*
+
+int gethead(struct list* list)
+{
+	if (list->size == 0)
+	{
+		printf("zhanweikong");
+	}
+	else
+		return list->pronode->date;
+}
+int main(void)
+{
+	struct list* list = creatlist();
+	int num = 12;
+	while (num != 0)
+	{
+		stactinsert(list, num % 2);
+		num /= 2;
+	}
+	while (list->size)
+	{
+		printf("%d", gethead(list));
+		pushstack(list);    //
+	}
+	这里是保证一个一个出 不能一起出去一个函数里面 只有函数一次一次出去
+                这样控制了一次一次出去 
+            
+             //保证一次一次出去是  
+                  {
+                      1获取开始队头pmove=list->pronde;
+                      2 对头指向下一个 list->pronode=list->pronode->next; 
+                      3释放开始的队头 free（pmove）;
+
+                   
+                   }
+
+	return 0;
+}

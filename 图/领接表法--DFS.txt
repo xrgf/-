@@ -1,0 +1,119 @@
+#include<iostream>
+#include<assert.h>
+typedef char vetype[8];
+using namespace std;
+int visited[10] = { 0 };
+typedef struct node
+{
+	int index;
+	struct node* next;
+}Node,*LPNode;
+LPNode creatnode(int index)
+{
+	LPNode newnode = (LPNode)malloc(sizeof(Node));
+	assert(newnode);
+	newnode->index = index;
+	newnode->next = nullptr;
+	return newnode;
+}
+void insertnode(LPNode* headnode,int index)
+{
+	LPNode newnode = creatnode(index);
+	newnode->next = *headnode;
+	*headnode = newnode;
+	
+}
+typedef struct vertex
+{
+	vetype V;
+	LPNode first;
+}ARRAY[10],*LPVertex,Vertex;
+typedef struct graph
+{
+	ARRAY V_all;
+	int arcnum;
+	int vert;
+}Graph,*LPGraph;
+int searchpos(LPGraph g, vetype v1)
+{
+	for (int i = 0; i < g->vert; i++)
+	{
+		if (strcmp(v1, g->V_all[i].V) == 0)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+LPGraph creatgraph()
+{
+	LPGraph g = (LPGraph)malloc(sizeof(Graph));
+	assert(g);
+	cout << "请输入边数和顶点数" << endl;
+	cin >> g->arcnum >> g->vert;
+	cout << "请输入顶点信息" << endl;
+
+	for (int i = 0; i < g->vert; i++)
+	{
+		cin>>g->V_all[i].V;
+		g->V_all[i].first = NULL;
+	}
+	
+	cout << "请输入顶点间信息" << endl;
+	for (int i = 0; i < g->arcnum; i++)
+	{
+		vetype v1, v2;
+		cin >> v1 >> v2;
+		int pos_v1 = searchpos(g, v1);
+		int pos_v2 = searchpos(g, v2);
+		insertnode(&g->V_all[pos_v1].first, pos_v2);
+		insertnode(&g->V_all[pos_v2].first, pos_v1);
+	}
+	return g;
+}
+void printfgraph(LPGraph g)
+{
+	for (int i = 0; i < g->vert; i++)
+	{
+		cout << g->V_all[i].V<<"  ";
+		LPNode pmove = g->V_all[i].first;
+		while (pmove != NULL)
+		{
+			cout << pmove->index << "  ";
+			pmove = pmove->next;
+		}
+		cout << endl;
+	}
+}
+void DFS(LPGraph g, int i)
+{
+	cout << g->V_all[i].V;
+	visited[i] = 1;
+	LPNode pmove = g->V_all[i].first;
+	while (pmove)
+	{
+		if (!visited[pmove->index])
+		{
+			DFS(g, pmove->index);
+			
+		}
+		pmove = pmove->next;
+	}
+}
+void DFSTraverse(LPGraph g)
+{
+	for (int i = 0; i < g->vert; i++)
+	{
+		if (visited[i] != 1)
+		{
+			DFS(g, i);
+		}
+	}
+}
+int main()
+{
+	LPGraph g = creatgraph();
+	printfgraph(g);
+	DFSTraverse(g);
+	return 0;
+}

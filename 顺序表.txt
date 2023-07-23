@@ -1,0 +1,80 @@
+#include<stdio.h>
+#include<stdlib.h>   顺序存储 即 第一个元素存储在数组下标为0的位置，接着把线性表 
+#include<string.h>  相邻的元素存储在数组中相邻的位置
+#include<assert.h>
+struct line
+{
+	int length;
+	int size;
+	char* array;
+};
+
+//创建表头
+struct line* creatlistline(int lenght)
+{
+	if (lenght < 1)
+	{
+		printf("lenghtx小于1无法创建数组\n");
+		return NULL;
+	}
+	struct line* newlist = (struct line*)malloc(sizeof(struct line));
+	assert(newlist);
+	newlist->size = 0;
+	newlist->length = lenght;
+	//
+	newlist->array = (char*)malloc(sizeof(char) * newlist->length);
+	memset(newlist->array, 0, sizeof(char) * newlist->length);
+	assert(newlist->array);
+	return newlist;
+}
+//插入字符到数组里面  如果占用了已有
+//顺序表结构是按顺序存储的 如果满了要插入
+
+void insertbyarray(struct line* list,int Index,char ch)
+{
+	if (Index<0 || list->length < Index)
+	{
+		printf("所插入位置小于0 无法插入\n");
+		return;
+	}
+	if (list->size == list->length)
+	{
+		list->array =(char*)realloc(list->array,2*list->length*sizeof(char));
+		assert(list->array);
+		list->length *= 2;
+		
+		
+	}
+	//先扩充在存储; 
+	for (int i = list->size; i >Index; --i)
+	{
+		list->array[i+1] = list->array[i];//就是相当于数组一样一个一个存 如果要在中间插入就把后面移动
+	}
+	list->array[Index] = ch;
+	list->size++;
+	return; 
+}
+void printfline(struct line* list)
+{
+	for (int i = 0; i < list->size; i++)
+	{
+		printf("%c", list->array[i]);
+	}
+	printf("\n");
+}
+
+int main()
+{
+
+	struct line* list = creatlistline(2);
+	insertbyarray(list, 0, 'b');
+	insertbyarray(list, 1, 'a');
+	printfline(list);
+	insertbyarray(list, 2, 'c');
+	insertbyarray(list, 1, 'd');
+	printfline(list);
+	insertbyarray(list, 3, 'e');
+	insertbyarray(list, 2, 'f');
+	printfline(list);
+	return 0;
+}

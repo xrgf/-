@@ -1,0 +1,32 @@
+#include<stdio.h>
+#include<graphics.h>
+#include<time.h>
+int time(int times,int id)
+{
+	static int rawtime[10] = {0};//b表示多个定时器  rawtime里面可以赋值多个 id代表rawtime里面是数字
+	int endtime = clock();
+	if (endtime - rawtime[id] >= times)
+	{
+		rawtime[id] = endtime;
+		return 1;
+	}
+	
+	return 0;
+}
+int main()
+{
+	
+	static int rawtime = 0;
+	while (1)
+	{
+		
+		int endtime = clock();
+		if (endtime - rawtime >= 300)
+		{
+			rawtime = endtime;
+			printf("kkkkkkkk\n");
+		}
+		printf("666\n");
+		Sleep(50);
+	}
+

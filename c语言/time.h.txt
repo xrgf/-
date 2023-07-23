@@ -1,0 +1,18 @@
+clock_t state =clock()//获取程序运行到这里用的面秒数
+time_t rawtime ;
+time(&rawtime);获取当前时间
+struct tm*info;
+info=gmtime(&rawtime);
+//获取当前时间后通过gmtime转换到相应的年月日啥；
+struct tm{}结构体里面包含年月日
+
+time_t t;
+	time(&t);
+	struct tm *info;
+	info = gmtime(&t);
+	printf("%d", info->tm_hour+8);UTC时间 北京时间要+8
+                printf（“%d”,info->tm_year）//打印的是1900到现在的年份
+                printf("%d",info->month)打印的0-11月 所以要+1真正的月份
+
+
+	

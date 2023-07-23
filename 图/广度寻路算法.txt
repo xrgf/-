@@ -1,0 +1,160 @@
+55nclude<iostream>
+#include<vector>
+#define COL 10
+#define ROW 10
+using namespace std;
+enum dir{p_up,p_right,p_down,p_left};
+class TestMap
+{
+public:
+	int isfind;
+};
+class mypoint
+{
+public:
+	mypoint(int row, int col) :row(row), col(col) {};
+	int row;
+	int col;
+	mypoint() {};
+	
+	mypoint operator=(mypoint point)
+	{
+		
+		return mypoint(point.row, point.col);
+	}
+	
+};
+class node
+{
+public:
+	mypoint point;
+	node* parent;
+	vector<node*>child;
+	node(mypoint point) :point(point), parent(NULL) {};
+	
+	
+};
+TestMap testmap[ROW][COL] ={
+	
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0
+};
+bool CanWalk(int map[][COL], TestMap testmap[][COL], mypoint point)
+{
+	if (point.row >= ROW && point.row < 0 && point.col < 0 && point.col >= COL)
+		return false;
+	if (testmap[point.row][point.col].isfind)
+	{
+		return false;
+	}
+	if (map[point.row][point.col])
+	{
+		return false;
+	}
+	return true;
+}
+
+int main()
+{
+	int map[ROW][COL] = {
+		1,1,1,1,1,1,1,1,1,1,
+		1,0,0,0,0,0,1,1,1,1,
+		1,0,0,0,1,1,1,1,1,1,
+		1,0,0,0,0,0,0,0,1,1,
+		1,0,1,1,1,1,1,0,1,1,
+		1,0,1,0,0,1,1,0,1,1,
+		1,0,1,0,1,1,1,0,1,1,
+		1,0,1,1,1,1,0,0,1,1,
+		1,0,0,1,1,0,0,0,0,1,
+		1,1,1,1,1,1,1,1,1,1
+	};
+	mypoint begin(1, 1);
+	mypoint end(8,2);
+	bool IsFindEnd = false;
+	node* root = new node(begin);
+	mypoint curent = begin;
+	testmap[begin.row][begin.col].isfind = 1;
+	vector<node*>curlever;
+	
+	curlever.push_back(root);
+	mypoint temp;
+	node* Child=NULL;
+	while (1)
+	{
+		vector<node*>nextlever;
+		for (int i = 0; i <curlever.size(); i++)
+		{
+			curent.row = curlever[i]->point.row;
+			curent.col = curlever[i]->point.col;
+			for (int j = 0; j < 4; j++)
+			{
+				switch (j)
+				{
+				case p_up:
+					temp.row=curent.row-1;
+					temp.col = curent.col;
+					break;
+				case p_right:
+					temp.row = curent.row;
+					temp.col = curent.col+1;
+					break;
+				case p_down:
+					temp.row = curent.row + 1;
+					temp.col = curent.col;
+					break;
+				case p_left:
+					temp.row = curent.row ;
+					temp.col = curent.col-1;
+					break;
+				}
+				if (CanWalk(map,testmap,temp)==true)
+				{
+					Child = new node(temp);
+					Child->parent = curlever[i];//指向父节点
+					curlever[i]->child.push_back(Child);
+					testmap[temp.row][temp.col].isfind = true;
+					nextlever.push_back(Child);//放到下一层去
+					if (end.row == temp.row && end.col == temp.col)
+					{
+						IsFindEnd = true;
+						break;
+					}//要放在里面不然外面不会判断temp是不是能走
+				
+				}
+				
+			}//end of for(j)
+			if (IsFindEnd)
+			{
+				break;
+			}
+		}//end of for(i)
+		//if (!nextlever.size())break;
+		
+		if (IsFindEnd)
+		{
+			cout << "找到了" << endl;
+			while (Child)
+			{
+				cout << "<" << Child->point.row << "." << Child->point.col << ">";
+				Child = Child->parent;
+			}
+			break;
+		}
+		curlever = nextlever;
+		if (nextlever.size() == 0)
+		{
+			cout << "找不到";
+			break;
+		}
+	}//end fo while(1)
+	
+	return 0;
+}

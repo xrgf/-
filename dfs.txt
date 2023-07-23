@@ -1,0 +1,95 @@
+#include<iostream>
+#include<sstream>
+#include<iomanip>
+using namespace std;
+char str[31];
+void solution()
+{
+	int ip[30];
+	while (cin.getline(str, 31,EOF))
+	{
+
+		
+		
+	}
+
+
+
+
+	
+}
+//begin表示开始位置 
+//end表示结束位置
+//n表示总通道数目
+//road
+int ant = 0;//表示总通路的数目
+int visit[1001] = { 0 };//0表示没有访问过
+int map[1001][1001] = { 0 };
+int note[1001] = { 0 };
+int times[1001] = { 0 };
+void dfs(int begin, int end, int n, int road)
+{
+	if (begin == end)
+	{
+		//
+		ant++;
+		for (int i = 1; i < road; i++)
+		{
+			times[note[i]]++;//note[i]里面的值的路通的
+			//这个表示这两个通路经过的点
+		}
+	}
+	
+	for (int i = 1; i <= n; i++)
+	{
+
+
+			if (visit[i] == 0 && map[begin][i] == 1)
+			{
+				//visit[0]表示这个点没有被访问过
+				//map[begin][i]表示这二点是联通的
+				visit[i] = 1;
+				visit[begin] = 1;//表示这两个点已经被访问过了
+				note[road] = i;//road走到那条路了
+				dfs(i, end, n, road + 1);
+				visit[i] = 0;//退出了要重新标记点
+				
+			}
+
+	}
+}
+
+int main()
+{
+	int count = 0;
+	int n, m;
+	cin >> n >> m;
+
+	int pos1;
+	int pos2;
+	for (int i = 1; i <= m; i++)
+	{
+		cin >> pos1 >> pos2;
+		map[pos1][pos2] = 1;
+		map[pos2][pos1] = 1;
+	}
+	int begin, end;
+	cin >> begin >> end;
+	dfs(begin, end, n, 1);
+	if (ant == 0)
+	{
+		cout << -1 << endl;
+		return 0;
+	}
+	else
+	for (int i = 1; i <= n; i++)
+	{
+		if (ant == times[i]&&i!=end)//因为会到后一个所以要把最后一个踢出
+		{
+				count++;
+		}
+	}
+	
+	cout << count << endl;
+	return 0;
+}

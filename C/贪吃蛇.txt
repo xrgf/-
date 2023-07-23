@@ -1,0 +1,428 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<assert.h>
+#include<conio.h>
+#include<time.h>
+#define CLOS 25
+#define ROW 25
+#define LEN 3
+
+enum DIRECT {
+	UP, RIGHT, LEFT, DOWN
+};
+enum MAP {
+	ROAD, WALL, SNACKHEAD, SNACKBOBY, SNACKFOOD
+};
+typedef struct SnakeHead
+{
+	int len;
+	int x;
+	int y;
+	int dir;
+	struct SnakeBoby* next;
+
+};
+struct SnakeBoby
+{
+	int x;
+	int y;
+	struct SnakeBoby* next;
+};
+struct Food
+{
+	int size;
+	int x;
+	int y;
+};
+void INITMAP(int map[][ROW], int clos, int row)
+{
+	for (int i = 0; i < clos; i++)
+	{
+		map[i][0] = 1;
+		map[i][row - 1] = 1;
+	}
+	for (int i = 0; i < row; i++)
+	{
+		map[0][i] = 1;
+		map[row - 1][i] = 1;
+	}
+
+}
+//打印地图蛇和墙
+void DRAWMAP(int map[][ROW], int clos, int row)
+{
+	//遍历地图去打印
+	for (int i = 0; i < clos; i++)
+	{
+		for (int j = 0; j < row; j++)
+		{
+			switch (map[i][j])
+			{
+			case 0:
+				printf("  ");
+				break;
+			case 1:
+				printf("■");
+				break;
+			case 2:
+				printf("□");
+				break;
+			case 3:
+				printf("■");
+				break;
+			case 4:
+				printf("●");
+				break;
+
+			}
+		}
+		printf("\n");
+	}
+
+}
+
+struct Food* creatfood()
+{
+	struct Food* food = (struct Food*)malloc(sizeof(struct Food));
+	assert(food);
+	food->x = 0;
+	food->y = 0;
+	food->size = 0;
+	return food;
+}
+struct SnakeBoby* creatboby()
+{
+	struct SnakeBoby* newnode = (struct SnakeBoby*)malloc(sizeof(struct SnakeBoby));
+	assert(newnode);
+	newnode->next = NULL;
+
+	newnode->x = 0;
+	newnode->y = 0;
+	return newnode;
+}
+struct SnakeHead* creadhead(int map[][ROW])
+{
+	struct SnakeHead* head = (struct SnakeHead*)malloc(sizeof(struct SnakeHead));
+	assert(head);
+	head->next = NULL;
+	head->x = 3;
+	head->y = 3;
+	head->dir = 1;
+	head->len = 1;
+	map[head->y][head->x] = SNACKHEAD;
+	return head;
+}
+//吃到食物表尾插入
+void INSERTBYTAIL(struct SnakeHead* head, int map[][ROW])
+{
+	struct SnakeBoby* boby = creatboby();
+
+	if (head->next == NULL)
+	{
+		head->next = boby;
+		boby->x = head->x ;
+		boby->y = head->y-1;
+
+	}
+	else if (head->next->next == NULL)
+	{
+		head->next->next = boby;
+		boby->x = head->next->x ;
+		boby->y = head->next->y-1;
+
+	}
+	else
+	{   ///吃到食物就表尾插入
+		struct SnakeBoby* pronode = head->next;
+		struct SnakeBoby* posnode = pronode->next;
+		while (posnode->next != NULL)
+		{
+			pronode = posnode;
+			posnode = posnode->next;
+		}
+		posnode->next = boby;
+		boby->x = posnode->x;
+		boby->y = posnode->y;
+
+	}
+	map[boby->y][boby->x] = SNACKBOBY;
+	head->len++;
+
+}
+void INITSNAKE(struct SnakeHead* head, int map[][ROW], int initlen)
+{
+	for (int i = 1; i < initlen; i++)
+	{
+		INSERTBYTAIL(head, map);
+	}
+}
+void MOVEBOBY(struct SnakeHead* head, int map[][ROW])
+{
+	struct SnakeBoby* pronode = head->next;
+	struct SnakeBoby* posnode = pronode->next;
+
+	while (posnode->next != NULL)
+	{
+		pronode = pronode->next;
+		posnode = posnode->next;
+	}
+	map[posnode->y][posnode->x] = 0;
+
+	int n = head->len - 3;
+	
+	while (n!=-1)
+	{
+		pronode = head->next;   //每次移动从头开始移动
+		posnode = pronode->next;
+
+		for (int i = 0; i < n; i++) //6 3  2
+		{
+			pronode = pronode->next;
+			posnode = posnode->next;
+		}
+		posnode->x = pronode->x;
+		posnode->y = pronode->y;
+		map[posnode->y][posnode->x] = SNACKBOBY;
+		n--;
+	}
+	posnode = head->next;
+	posnode->x = head->x;
+	posnode->y = head->y;
+	map[posnode->y][posnode->x] = SNACKBOBY;
+	
+	//for (int i = head->len - 1; i > 0; --i)
+	//{
+	//	pronode = head->next;
+	//	posnode = pronode->next;
+	//	if (i == head->len - 1)//先把蛇最后删掉
+	//	{
+	//		while (posnode->next != NULL)
+	//		{
+	//			pronode = posnode;
+	//			posnode = posnode->next;
+	//		}
+	//		map[posnode->x][posnode->y] = 0;
+	//	}
+	//	if (i == 1)
+	//	{
+	//		goto next;
+	//	}
+	//	for (int j = 2; j < i; ++j)
+	//	{
+	//		pronode = posnode;
+	//		posnode = posnode->next;
+	//	}
+	//	posnode->x = pronode->x;
+	//	posnode->y = pronode->y;
+	//	map[posnode->x][posnode->y] = SNACKBOBY;
+	//next:
+	//	if (i == 1)
+	//	{
+	//		pronode->x = head->x;
+	//		pronode->y = head->y;
+	//		map[pronode->x][pronode->y] = SNACKBOBY;
+	//	}
+
+
+	//}
+
+
+}
+void MOVESNAKE(struct SnakeHead* head, int map[][ROW])
+{
+	//蛇身坐标相互赋值
+	MOVEBOBY(head, map);
+
+	switch (head->dir)
+	{
+		
+		
+	 case UP:
+	 {//先动蛇头坐标;
+		
+		//判断是不是死了
+		if (map[head->y - 1][head->x] == WALL || map[head->y - 1][head->x] == SNACKBOBY)
+		{
+			system("pause");
+			exit(0);
+		}
+		--head->y;
+		map[head->y][head->x] = SNACKHEAD;
+		break;
+	}
+	case DOWN:
+	{
+		
+		if (map[head->y + 1][head->x] == WALL || map[head->y + 1][head->x] == SNACKBOBY)
+		{
+			system("pause");
+			exit(0);
+		}
+		++head->y;
+		map[head->y][head->x] = SNACKHEAD;
+		break;
+	}
+
+	case LEFT:
+	{
+		
+		if (map[head->y][head->x - 1] == WALL || map[head->y][head->x - 1] == SNACKBOBY)
+		{
+			system("pause");
+			exit(0);
+		}
+		--head->x;
+		map[head->y][head->x] = SNACKHEAD;
+		break;
+	}
+
+	case RIGHT:
+	{
+		
+		if (map[head->y][head->x + 1] == WALL || map[head->y][head->x + 1] == SNACKBOBY)
+		{
+			system("pause");
+			exit(0);
+		}
+		++head->x;
+		map[head->y][head->x] = SNACKHEAD;
+		break;
+	}
+
+
+	}
+
+}
+void PLAY(struct SnakeHead* head)
+{
+	if (_kbhit())
+	{
+		char key = _getch();
+		switch (key)
+		{
+		case 75:
+		case 'a':
+			//按反方向默认不变
+			if (head->dir == RIGHT)
+			{
+				head->dir = RIGHT;
+				break;
+			}
+			head->dir = LEFT;
+			break;
+		case 'd':
+		case 77:
+			if (head->dir == LEFT)
+			{
+				head->dir = LEFT;
+				break;
+			}
+			head->dir = RIGHT;
+			break;
+
+		case'w':
+		case 72:
+			if (head->dir ==DOWN)
+			{
+				head->dir = DOWN;
+				break;
+			}
+			head->dir = UP;
+			break;
+
+		case's':
+		case 80:
+			if (head->dir == UP)
+			{
+				head->dir = UP;
+				break;
+			}
+			head->dir = DOWN;
+			break;
+		}
+
+	}
+
+
+
+}
+int BLANK(struct Food* food, int map[][ROW], int clos, int row)
+{
+	for (int i = 0; i < clos; i++)
+	{
+		for (int j = 0; j < row; ++j)
+		{
+			if (map[i][j] == SNACKFOOD)
+			{
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+void TIME_TFOOD(clock_t, struct Food* food, int map[][ROW])
+{
+	static clock_t statetime = 0;
+    clock_t endtime = clock();
+	if (!BLANK(food,map,CLOS,ROW)||endtime - statetime >= 5000)
+	{
+		map[food->y][food->x] = ROAD;
+		food->x = rand() % (CLOS - 1) + 1;
+		food->y = rand() % (ROW - 1) + 1;
+		map[food->y][food->x] = SNACKFOOD;
+		statetime = endtime;
+	}
+	
+	//如果到食物结束没吃到就一直定时产生
+	
+
+
+}
+void  SCORE(struct Food* food, struct SnakeHead* head, int* score, int map[][ROW])
+{
+
+	if (food->x == head->x && food->y == head->y)
+	{
+		INSERTBYTAIL(head,map);
+		*score += 5;
+	}
+
+}
+
+int main()
+{
+	int score = 0;
+	int map[CLOS][ROW] = { 0 };
+	struct SnakeHead* head = creadhead(map);
+	INITMAP(map, CLOS, ROW);
+	INITSNAKE(head, map, LEN);
+	struct Food* food = creatfood();
+	food->x = rand() % (CLOS - 1) + 1;
+	food->y = rand() % (ROW - 1) + 1;
+	map[food->y][food->x] = SNACKFOOD;
+	while (1)
+	{
+
+		PLAY(head);
+		MOVESNAKE(head, map);
+		SCORE(food, head, &score, map);//要放在食物前面 不然吃到了 立马产生出来坐标就变了
+		TIME_TFOOD(1000, food, map);
+		DRAWMAP(map, CLOS, ROW);
+		printf("%d", score);
+
+		_sleep(100);
+		system("cls");
+	}
+
+
+
+
+
+
+
+
+
+
+	return 0;
+}
